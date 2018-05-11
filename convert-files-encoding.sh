@@ -41,11 +41,17 @@ for file_type in $file_types; do
     for file in $(find "$path" -name "$file_type"); do
         file_encoding=$(chardet $file | awk '{print $2}')
         if [ "$file_encoding" != "$outencoding" ]; then
+
+            # Если входная кодировка не задана, то в качестве исходной используется кодировка определенная с помощью chardet:
             if [ -z "$inencoding" ]; then
                 inencoding=$file_encoding
             fi
+            
+            # Если задана входная кодировка через -i или --inencoding, то предполагается, что файл именно в этой кодировке.
+
             echo "recode $inencoding..$outencoding $file"
             recode $inencoding..$outencoding "$file"
         fi    
     done
 done
+
